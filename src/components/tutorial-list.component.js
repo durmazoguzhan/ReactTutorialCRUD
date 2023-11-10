@@ -1,6 +1,7 @@
-import { Component } from "react";
+import React, { Component } from "react";
 import tutorialService from "../services/tutorial.service";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default class TutorialsList extends Component {
   constructor(props) {
@@ -9,10 +10,10 @@ export default class TutorialsList extends Component {
       tutorials: [],
       currentIndex: -1,
       currentTutorial: null,
+      searchInput: "",
     };
   }
 
-  //tutoriallist sayfası çağrıldığında devreye giren fonksiyon
   componentDidMount() {
     this.tutorialllariGetir();
   }
@@ -21,9 +22,10 @@ export default class TutorialsList extends Component {
     tutorialService
       .getAll()
       .then((tutorialListesi) => {
-        console.log(tutorialListesi);
+        const filteredTutorials = tutorialListesi.data.filter((tutorial) => tutorial.title.toLowerCase().includes(this.state.searchInput.toLowerCase()));
+
         this.setState({
-          tutorials: tutorialListesi.data,
+          tutorials: filteredTutorials,
         });
       })
       .catch((hata) => {
@@ -38,31 +40,49 @@ export default class TutorialsList extends Component {
     });
   }
 
+  onChangeSearchInput = (e) => {
+    this.setState(
+      {
+        searchInput: e.target.value,
+      },
+      () => {
+        this.tutorialllariGetir();
+      }
+    );
+  };
+
   render() {
-    const { tutorials, currentTutorial, currentIndex } = this.state;
+    const { tutorials, currentTutorial, currentIndex, searchInput } = this.state;
     return (
       <div className="list row">
         <div className="col-md-6">
           <h4>Tutorial Listesi</h4>
+          <br />
+          <div className="input-group mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Tutorial ara..."
+              aria-describedby="button-addon2"
+              value={searchInput}
+              onChange={this.onChangeSearchInput}
+            />
+            <button className="btn btn-outline-dark" type="button" id="button-addon2">
+              <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" />
+            </button>
+          </div>
+
           <ul className="list-group">
             {tutorials &&
-              tutorials.map(
-                (
-                  tutorial,
-                  index //tutorials array içindeki her bir elemanı tutorial nesnesi olarak kullandık
-                ) => (
-                  <li
-                    className={
-                      "list-group-item " +
-                      (index === currentIndex ? "active" : "")
-                    }
-                    onClick={() => this.AktifTutorial(tutorial, index)}
-                    key={index}
-                  >
-                    {tutorial.title}
-                  </li>
-                )
-              )}
+              tutorials.map((tutorial, index) => (
+                <li
+                  className={"list-group-item " + (index === currentIndex ? "active" : "")}
+                  onClick={() => this.AktifTutorial(tutorial, index)}
+                  key={index}
+                >
+                  {tutorial.title}
+                </li>
+              ))}
           </ul>
         </div>
 
@@ -88,10 +108,7 @@ export default class TutorialsList extends Component {
                 </label>{" "}
                 {currentTutorial.published ? "Yayınlandı " : "Bekleniyor..."}
               </div>
-              <Link
-                to={"/tutorials/" + currentTutorial.id}
-                className="btn btn-success"
-              >
+              <Link to={"/tutorials/" + currentTutorial.id} className="btn btn-success">
                 Düzenle
               </Link>
             </div>

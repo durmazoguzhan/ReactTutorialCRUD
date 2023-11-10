@@ -5,6 +5,10 @@ import Tutorial from "./components/tutorial.component";
 import TutorialsList from "./components/tutorial-list.component";
 import AddTutorial from "./components/add-tutorial.component";
 import "./App.css";
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+
+library.add(fas);
 
 class App extends Component {
   render() {

@@ -1,4 +1,4 @@
-import { Component } from "react";
+import React, { Component } from "react";
 import tutorialService from "../services/tutorial.service";
 
 export default class Tutorial extends Component {
@@ -15,7 +15,7 @@ export default class Tutorial extends Component {
   }
 
   componentDidMount() {
-    this.detayTutorial(this.props.match.params.id);
+    // this.detayTutorial(this.props.match.params.id);
   }
 
   detayTutorial(id) {
@@ -32,6 +32,6 @@ export default class Tutorial extends Component {
   }
 
   render() {
-    return (<div>Tutorial detay sayfasıdır.</div>);
+    return <div>Tutorial detay sayfasıdır.</div>;
   }
 }
